@@ -23,8 +23,8 @@ spring:
 jwt:
   header: Authorization
   #HS512 알고리즘을 사용할 것이기 때문에 512bit, 즉 64byte 이상의 secret key를 사용해야 한다.
-  #echo 'Everyones_Coupon_Of_Great_Friends'|base64
-  secret: RXZlcnlvbmVzX0NvdXBvbl9PZl9HcmVhdF9GcmllbmRz
+  #echo 'Everyones_Coupon_Of_Great_Elegant_Inteligent_Wise_Handsome_CHAN_And_Stupid_Friends_Project'|base64
+  secret: RXZlcnlvbmVzX0NvdXBvbl9PZl9HcmVhdF9FbGVnYW50X0ludGVsaWdlbnRfV2lzZV9IYW5kc29tZV9DSEFOX0FuZF9TdHVwaWRfRnJpZW5kc19Qcm9qZWN0
   token-validity-in-seconds: 1800
 
 logging:
