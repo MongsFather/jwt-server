@@ -2,8 +2,6 @@ package com.mongsfather.auth.service;
 
 import java.util.Collections;
 
-import javax.validation.Valid;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;

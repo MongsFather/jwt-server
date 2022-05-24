@@ -32,6 +32,7 @@ public class AuthController {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final AuthService authService;   
 
+    //해당 기능 로그인으로 대체함 나중에 삭제예정
     @PostMapping("/authenticate")
     public ResponseEntity<TokenDto> authorize(@Valid @RequestBody LoginDto loginDto) {
 
