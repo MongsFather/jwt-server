@@ -76,6 +76,7 @@ public class TokenProvider implements InitializingBean {
       return TokenDto.builder()
     		  .token(jwtToken)
     		  .refreshToken(refreshToken)
+    		  .tokenExpireTime(validity.getTime())
     		  .build();
    }
 

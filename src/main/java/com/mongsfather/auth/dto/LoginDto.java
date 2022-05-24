@@ -1,4 +1,4 @@
-package com.mongsfather.user.login.dto;
+package com.mongsfather.auth.dto;
 
 import lombok.*;
 

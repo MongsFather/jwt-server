@@ -1,4 +1,4 @@
-package com.mongsfather.user.entity;
+package com.mongsfather.entity;
 
 import javax.persistence.*;
 

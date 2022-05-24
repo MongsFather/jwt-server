@@ -1,4 +1,4 @@
-package com.mongsfather.user.login.controller;
+package com.mongsfather.auth.controller;
 
 import javax.validation.Valid;
 
@@ -14,21 +14,23 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mongsfather.auth.dto.LoginDto;
+import com.mongsfather.auth.service.AuthService;
+import com.mongsfather.entity.User;
 import com.mongsfather.jwt.JwtFilter;
 import com.mongsfather.jwt.TokenProvider;
 import com.mongsfather.jwt.dto.TokenDto;
-import com.mongsfather.user.login.dto.LoginDto;
+import com.mongsfather.user.dto.UserDto;
+
+import lombok.RequiredArgsConstructor;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api")
 public class AuthController {
     private final TokenProvider tokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
-
-    public AuthController(TokenProvider tokenProvider, AuthenticationManagerBuilder authenticationManagerBuilder) {
-        this.tokenProvider = tokenProvider;
-        this.authenticationManagerBuilder = authenticationManagerBuilder;
-    }
+    private final AuthService authService;   
 
     @PostMapping("/authenticate")
     public ResponseEntity<TokenDto> authorize(@Valid @RequestBody LoginDto loginDto) {
@@ -45,5 +47,27 @@ public class AuthController {
         httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + tokenDto.getToken());
 
         return new ResponseEntity<>(tokenDto, httpHeaders, HttpStatus.OK);
+    }
+    
+    @PostMapping("/signup")
+    public ResponseEntity<User> signup(@Valid @RequestBody UserDto userDto
+    ) {
+        return ResponseEntity.ok(authService.signup(userDto));
+    }
+    
+    @PostMapping("/login")
+    public ResponseEntity<TokenDto> login(@Valid @RequestBody LoginDto loginDto) {
+    	
+    	TokenDto tokenDto = authService.login(loginDto);
+    	HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + tokenDto.getToken());
+        
+        return new ResponseEntity<>(tokenDto, httpHeaders, HttpStatus.OK); //응답값 헤더와 바디 모두에 token 셋팅
+//        return ResponseEntity.ok(userService.login(loginDto));
+    }
+    
+    @PostMapping("/reissue")
+    public ResponseEntity<TokenDto> reissue(@Valid @RequestBody TokenDto tokenDto) {
+        return ResponseEntity.ok(authService.reissue(tokenDto));
     }
 }

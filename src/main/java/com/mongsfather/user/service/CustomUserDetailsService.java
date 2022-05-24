@@ -11,8 +11,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.mongsfather.entity.User;
 import com.mongsfather.repository.UserRepository;
-import com.mongsfather.user.entity.User;
 
 @Component("userDetailsService")
 public class CustomUserDetailsService implements UserDetailsService {

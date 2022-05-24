@@ -3,7 +3,7 @@ package com.mongsfather.repository;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.mongsfather.user.entity.User;
+import com.mongsfather.entity.User;
 
 import java.util.Optional;
 
