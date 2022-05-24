@@ -75,6 +75,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 			.antMatchers(
 						"/api/hello"					//해당 request에 대한 모든 권한 허용
 						,"/api/authenticate"			//토큰요청에대한 토큰검사제외
+						,"/api/login"					//로그인에대한 토큰검사제외
 						,"/api/signup"					//회원가입에대한 토큰검사제외
 			).permitAll()
 			.anyRequest().authenticated()				//그밖의 request에 대한 검증하겠다 (ex 그밖의 request는 401 권한없음 response)

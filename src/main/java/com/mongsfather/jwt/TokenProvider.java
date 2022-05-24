@@ -14,6 +14,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
+import com.mongsfather.jwt.dto.TokenDto;
+
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
@@ -29,15 +31,18 @@ public class TokenProvider implements InitializingBean {
 
    private final String secret;
    private final long tokenValidityInMilliseconds;
+   private final long refreshTokenValidityInMilliseconds;
 
    private Key key;
 
 
    public TokenProvider(	//bean 생성 후 jwt token 의존성주입 함수
       @Value("${jwt.secret}") String secret,
-      @Value("${jwt.token-validity-in-seconds}") long tokenValidityInSeconds) {
+      @Value("${jwt.token-validity-in-seconds}") long tokenValidityInSeconds,
+      @Value("${jwt.refresh-token-validity-in-seconds}") long refreshTokenValidityInSeconds) {
       this.secret = secret;
       this.tokenValidityInMilliseconds = tokenValidityInSeconds * 1000;		//토큰만료시간 변수에 할당 30분 (1800초)
+      this.refreshTokenValidityInMilliseconds = refreshTokenValidityInSeconds * 1000;		//토큰만료시간 변수에 할당 30분 (1800초)
    }
 
    @Override
@@ -47,20 +52,31 @@ public class TokenProvider implements InitializingBean {
    }
 
    // 권한정보 할당
-   public String createToken(Authentication authentication) {
+   public TokenDto createToken(Authentication authentication) {
       String authorities = authentication.getAuthorities().stream()
          .map(GrantedAuthority::getAuthority)
          .collect(Collectors.joining(","));
 
       long now = (new Date()).getTime();
       Date validity = new Date(now + this.tokenValidityInMilliseconds);
-
-      return Jwts.builder()
-         .setSubject(authentication.getName())
-         .claim(AUTHORITIES_KEY, authorities)
-         .signWith(key, SignatureAlgorithm.HS512)
-         .setExpiration(validity)		//토큰만료시간 셋팅
-         .compact();
+      Date refreshValidity = new Date(now + this.refreshTokenValidityInMilliseconds);
+      
+      String jwtToken = Jwts.builder()
+    	         .setSubject(authentication.getName())
+    	         .claim(AUTHORITIES_KEY, authorities)
+    	         .signWith(key, SignatureAlgorithm.HS512)
+    	         .setExpiration(validity)		//토큰만료시간 셋팅
+    	         .compact();
+      
+      String refreshToken = Jwts.builder()
+ 	         .signWith(key, SignatureAlgorithm.HS512)
+ 	         .setExpiration(refreshValidity)
+ 	         .compact();
+      
+      return TokenDto.builder()
+    		  .token(jwtToken)
+    		  .refreshToken(refreshToken)
+    		  .build();
    }
 
    // 토큰을 파라미터로 전달받아 권한정보를 획득 후 User객체생성
