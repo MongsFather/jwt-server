@@ -32,7 +32,7 @@ public class AuthController {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final AuthService authService;   
 
-    //ÇØ´ç ±â´É ·Î±×ÀÎÀ¸·Î ´ëÃ¼ÇÔ ³ªÁß¿¡ »èÁ¦¿¹Á¤
+    //í•´ë‹¹ ê¸°ëŠ¥ ë¡œê·¸ì¸ìœ¼ë¡œ ëŒ€ì²´í•¨ ë‚˜ì¤‘ì— ì‚­ì œì˜ˆì •
     @PostMapping("/authenticate")
     public ResponseEntity<TokenDto> authorize(@Valid @RequestBody LoginDto loginDto) {
 
@@ -63,7 +63,7 @@ public class AuthController {
     	HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + tokenDto.getToken());
         
-        return new ResponseEntity<>(tokenDto, httpHeaders, HttpStatus.OK); //ÀÀ´ä°ª Çì´õ¿Í ¹Ùµğ ¸ğµÎ¿¡ token ¼ÂÆÃ
+        return new ResponseEntity<>(tokenDto, httpHeaders, HttpStatus.OK); //ì‘ë‹µê°’ í—¤ë”ì™€ ë°”ë”” ëª¨ë‘ì— token ì…‹íŒ…
 //        return ResponseEntity.ok(userService.login(loginDto));
     }
     

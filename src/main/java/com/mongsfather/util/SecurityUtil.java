@@ -19,7 +19,7 @@ public class SecurityUtil {
       final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
       if (authentication == null) {
-         logger.debug("Security Context¿¡ ÀÎÁõ Á¤º¸°¡ ¾ø½À´Ï´Ù.");
+         logger.debug("Security Contextì— ì¸ì¦ ì •ë³´ê°€ ì—†ìŠµë‹ˆë‹¤.");
          return Optional.empty();
       }
 

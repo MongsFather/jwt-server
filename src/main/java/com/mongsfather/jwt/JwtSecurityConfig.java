@@ -13,7 +13,7 @@ public class JwtSecurityConfig extends SecurityConfigurerAdapter<DefaultSecurity
         this.tokenProvider = tokenProvider;
     }
 
-    // Ä¿½ºÅÒ JwtÇÊÅÍ security¿¡ µî·Ï
+    // ì»¤ìŠ¤í…€ Jwtí•„í„° securityì— ë“±ë¡
     @Override
     public void configure(HttpSecurity http) {
         JwtFilter customFilter = new JwtFilter(tokenProvider);

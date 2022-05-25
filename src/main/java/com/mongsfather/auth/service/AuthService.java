@@ -36,15 +36,15 @@ public class AuthService {
 	
 	@Transactional
     public User signup(UserDto userDto) {
-        if (userRepository.findOneWithAuthoritiesByUsername(userDto.getUsername()).orElse(null) != null) { //À¯Àú¸íÀ¸·Î È¸¿øÁ¤º¸Á¶È¸
-            throw new RuntimeException("ÀÌ¹Ì °¡ÀÔµÇ¾î ÀÖ´Â À¯ÀúÀÔ´Ï´Ù.");
+        if (userRepository.findOneWithAuthoritiesByUsername(userDto.getUsername()).orElse(null) != null) { //ìœ ì €ëª…ìœ¼ë¡œ íšŒì›ì •ë³´ì¡°íšŒ
+            throw new RuntimeException("ì´ë¯¸ ê°€ì…ë˜ì–´ ìˆëŠ” ìœ ì €ì…ë‹ˆë‹¤.");
         }
 
-        Authority authority = Authority.builder()	//±ÇÇÑ»ı¼º
+        Authority authority = Authority.builder()	//ê¶Œí•œìƒì„±
                 .authorityName("ROLE_USER")
                 .build();
 
-        User user = User.builder()	//À¯ÀúÁ¤º¸»ı¼º
+        User user = User.builder()	//ìœ ì €ì •ë³´ìƒì„±
                 .username(userDto.getUsername())
                 .password(passwordEncoder.encode(userDto.getPassword()))
                 .nickname(userDto.getNickname())
@@ -57,23 +57,23 @@ public class AuthService {
     
     @Transactional
     public TokenDto login(LoginDto loginDto) {
-        // 1. Login ID/PW ¸¦ ±â¹İÀ¸·Î AuthenticationToken »ı¼º
+        // 1. Login ID/PW ë¥¼ ê¸°ë°˜ìœ¼ë¡œ AuthenticationToken ìƒì„±
     	UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword());
 
-        // 2. ½ÇÁ¦·Î °ËÁõ (»ç¿ëÀÚ ºñ¹Ğ¹øÈ£ Ã¼Å©) ÀÌ ÀÌ·ç¾îÁö´Â ºÎºĞ
-        //    authenticate ¸Ş¼­µå°¡ ½ÇÇàÀÌ µÉ ¶§ CustomUserDetailsService ¿¡¼­ ¸¸µé¾ú´ø loadUserByUsername ¸Ş¼­µå°¡ ½ÇÇàµÊ        
+        // 2. ì‹¤ì œë¡œ ê²€ì¦ (ì‚¬ìš©ì ë¹„ë°€ë²ˆí˜¸ ì²´í¬) ì´ ì´ë£¨ì–´ì§€ëŠ” ë¶€ë¶„
+        //    authenticate ë©”ì„œë“œê°€ ì‹¤í–‰ì´ ë  ë•Œ CustomUserDetailsService ì—ì„œ ë§Œë“¤ì—ˆë˜ loadUserByUsername ë©”ì„œë“œê°€ ì‹¤í–‰ë¨        
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        // 3. ÀÎÁõ Á¤º¸¸¦ ±â¹İÀ¸·Î JWT ÅäÅ« »ı¼º
+        // 3. ì¸ì¦ ì •ë³´ë¥¼ ê¸°ë°˜ìœ¼ë¡œ JWT í† í° ìƒì„±
         TokenDto tokenDto = tokenProvider.createToken(authentication);
         
-        // 4. Request Header ¿¡ token ¼ÂÆÃ
+        // 4. Request Header ì— token ì…‹íŒ…
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + tokenDto.getToken());
 
-        // 4. RefreshToken »ı¼º
+        // 4. RefreshToken ìƒì„±
         RefreshToken refreshToken = RefreshToken.builder()
                 .key(authentication.getName())
                 .value(tokenDto.getRefreshToken())
@@ -81,7 +81,7 @@ public class AuthService {
 
         refreshTokenRepository.save(refreshToken);
         
-        // 5. refreshToken ¼ÂÆÃ
+        // 5. refreshToken ì…‹íŒ…
         tokenDto.setRefreshToken(refreshToken.getValue());
         
         return tokenDto;
@@ -89,24 +89,24 @@ public class AuthService {
 
     @Transactional
     public TokenDto reissue(TokenDto tokenDto) {
-        // 1. Refresh Token °ËÁõ
+        // 1. Refresh Token ê²€ì¦
         if (!tokenProvider.validateToken(tokenDto.getRefreshToken())) {
-            throw new RuntimeException("Refresh Token ÀÌ À¯È¿ÇÏÁö ¾Ê½À´Ï´Ù.");
+            throw new RuntimeException("Refresh Token ì´ ìœ íš¨í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.");
         }
 
-        // 2. Access Token ¿¡¼­ User°´Ã¼ °¡Á®¿À±â
+        // 2. Access Token ì—ì„œ Userê°ì²´ ê°€ì ¸ì˜¤ê¸°
         Authentication authentication = tokenProvider.getAuthentication(tokenDto.getToken());
 
-        // 3. ÀúÀå¼Ò¿¡¼­ User ¸¦ ±â¹İÀ¸·Î Refresh Token °ª °¡Á®¿È
+        // 3. ì €ì¥ì†Œì—ì„œ User ë¥¼ ê¸°ë°˜ìœ¼ë¡œ Refresh Token ê°’ ê°€ì ¸ì˜´
         RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("·Î±×¾Æ¿ô µÈ »ç¿ëÀÚÀÔ´Ï´Ù."));
+                .orElseThrow(() -> new RuntimeException("ë¡œê·¸ì•„ì›ƒ ëœ ì‚¬ìš©ìì…ë‹ˆë‹¤."));
 
-        // 4. Refresh Token ÀÏÄ¡ÇÏ´ÂÁö °Ë»ç
+        // 4. Refresh Token ì¼ì¹˜í•˜ëŠ”ì§€ ê²€ì‚¬
         if (!refreshToken.getValue().equals(tokenDto.getRefreshToken())) {
-            throw new RuntimeException("ÅäÅ«ÀÇ À¯Àú Á¤º¸°¡ ÀÏÄ¡ÇÏÁö ¾Ê½À´Ï´Ù.");
+            throw new RuntimeException("í† í°ì˜ ìœ ì € ì •ë³´ê°€ ì¼ì¹˜í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.");
         }
 
-        // 5. »õ·Î¿î ÅäÅ« »ı¼º
+        // 5. ìƒˆë¡œìš´ í† í° ìƒì„±
         TokenDto reissueTokenDto = tokenProvider.createToken(authentication);
 
         RefreshToken reissueRefreshToken = RefreshToken.builder()
@@ -114,10 +114,10 @@ public class AuthService {
                 .value(reissueTokenDto.getRefreshToken())
                 .build();;
                 
-        // 6. ÀúÀå¼Ò Á¤º¸ ¾÷µ¥ÀÌÆ®
+        // 6. ì €ì¥ì†Œ ì •ë³´ ì—…ë°ì´íŠ¸
         refreshTokenRepository.save(reissueRefreshToken);
 
-        // ÅäÅ« ¹ß±Ş
+        // í† í° ë°œê¸‰
         return reissueTokenDto;
     }
 

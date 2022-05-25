@@ -16,13 +16,13 @@ import com.mongsfather.jwt.JwtSecurityConfig;
 import com.mongsfather.jwt.TokenProvider;
 
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)	//@PreAuthorize ¾î³ëÅ×ÀÌ¼ÇÀ» ¸Ş¼Òµå´ÜÀ§·Î Ãß°¡ÇÏ±âÀ§ÇØ Àû¿ë
+@EnableGlobalMethodSecurity(prePostEnabled = true)	//@PreAuthorize ì–´ë…¸í…Œì´ì…˜ì„ ë©”ì†Œë“œë‹¨ìœ„ë¡œ ì¶”ê°€í•˜ê¸°ìœ„í•´ ì ìš©
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	private final TokenProvider tokenProvider;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
-    // Ä¿½ºÅÒ TokenProvider, JwtAuthenticationEntryPoint, JwtAccessDeniedHandler ÁÖÀÔ
+    // ì»¤ìŠ¤í…€ TokenProvider, JwtAuthenticationEntryPoint, JwtAccessDeniedHandler ì£¼ì…
     public SecurityConfig(
             TokenProvider tokenProvider,
             JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
@@ -34,7 +34,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
     }
     
     @Bean
-    public PasswordEncoder passwordEncoder() { //Spring Security ÇÁ·¹ÀÓ¿öÅ©¿¡¼­ ºñ¹Ğ¹øÈ£¸¦ ¾ÏÈ£È­ÇÒ¶§ »ç¿ëÇÒ¼öÀÖ´Â ÇÔ¼ö¸¦ Á¦°ø
+    public PasswordEncoder passwordEncoder() { //Spring Security í”„ë ˆì„ì›Œí¬ì—ì„œ ë¹„ë°€ë²ˆí˜¸ë¥¼ ì•”í˜¸í™”í• ë•Œ ì‚¬ìš©í• ìˆ˜ìˆëŠ” í•¨ìˆ˜ë¥¼ ì œê³µ
         return new BCryptPasswordEncoder();
     }
 	
@@ -54,7 +54,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	@Override
 	protected void configure(HttpSecurity httpSecurity) throws Exception {
 		httpSecurity
-			.csrf().disable()		//ÅäÅ«¹æ½Ä »ç¿ë(stateless)À¸·Î ¼­¹ö¿¡ ÀÎÁõÁ¤º¸¸¦ º¸°üÇÏÁö ¾Ê±â ¶§¹®¿¡ ÇØ´ç ±â´É »ç¿ë¾ÈÇÔ 
+			.csrf().disable()		//í† í°ë°©ì‹ ì‚¬ìš©(stateless)ìœ¼ë¡œ ì„œë²„ì— ì¸ì¦ì •ë³´ë¥¼ ë³´ê´€í•˜ì§€ ì•Šê¸° ë•Œë¬¸ì— í•´ë‹¹ ê¸°ëŠ¥ ì‚¬ìš©ì•ˆí•¨ 
 	        .exceptionHandling()
 	        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
 	        .accessDeniedHandler(jwtAccessDeniedHandler)
@@ -65,20 +65,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	        .frameOptions()
 	        .sameOrigin()
 	
-	        // ¼¼¼ÇÀ» »ç¿ëÇÏÁö ¾Ê±â ¶§¹®¿¡ STATELESS·Î ¼³Á¤
+	        // ì„¸ì…˜ì„ ì‚¬ìš©í•˜ì§€ ì•Šê¸° ë•Œë¬¸ì— STATELESSë¡œ ì„¤ì •
 	        .and()
 	        .sessionManagement()
 	        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 		
 	        .and()
-			.authorizeRequests()						//¸ğµç¸®Äù½ºÆ®¿¡´ëÇÑ ÆÛ¹Ì¼Ç Áß
+			.authorizeRequests()						//ëª¨ë“ ë¦¬í€˜ìŠ¤íŠ¸ì—ëŒ€í•œ í¼ë¯¸ì…˜ ì¤‘
 			.antMatchers(
-						"/api/hello"					//ÇØ´ç request¿¡ ´ëÇÑ ¸ğµç ±ÇÇÑ Çã¿ë
-						,"/api/authenticate"			//ÅäÅ«¿äÃ»¿¡´ëÇÑ ÅäÅ«°Ë»çÁ¦¿Ü
-						,"/api/login"					//·Î±×ÀÎ¿¡´ëÇÑ ÅäÅ«°Ë»çÁ¦¿Ü
-						,"/api/signup"					//È¸¿ø°¡ÀÔ¿¡´ëÇÑ ÅäÅ«°Ë»çÁ¦¿Ü
+						"/api/hello"					//í•´ë‹¹ requestì— ëŒ€í•œ ëª¨ë“  ê¶Œí•œ í—ˆìš©
+						,"/api/authenticate"			//í† í°ìš”ì²­ì—ëŒ€í•œ í† í°ê²€ì‚¬ì œì™¸
+						,"/api/login"					//ë¡œê·¸ì¸ì—ëŒ€í•œ í† í°ê²€ì‚¬ì œì™¸
+						,"/api/signup"					//íšŒì›ê°€ì…ì—ëŒ€í•œ í† í°ê²€ì‚¬ì œì™¸
 			).permitAll()
-			.anyRequest().authenticated()				//±×¹ÛÀÇ request¿¡ ´ëÇÑ °ËÁõÇÏ°Ú´Ù (ex ±×¹ÛÀÇ request´Â 401 ±ÇÇÑ¾øÀ½ response)
+			.anyRequest().authenticated()				//ê·¸ë°–ì˜ requestì— ëŒ€í•œ ê²€ì¦í•˜ê² ë‹¤ (ex ê·¸ë°–ì˜ requestëŠ” 401 ê¶Œí•œì—†ìŒ response)
 		
 			.and()
 	        .apply(new JwtSecurityConfig(tokenProvider));

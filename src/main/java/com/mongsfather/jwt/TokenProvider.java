@@ -36,22 +36,22 @@ public class TokenProvider implements InitializingBean {
    private Key key;
 
 
-   public TokenProvider(	//bean »ı¼º ÈÄ jwt token ÀÇÁ¸¼ºÁÖÀÔ ÇÔ¼ö
+   public TokenProvider(	//bean ìƒì„± í›„ jwt token ì˜ì¡´ì„±ì£¼ì… í•¨ìˆ˜
       @Value("${jwt.secret}") String secret,
       @Value("${jwt.token-validity-in-seconds}") long tokenValidityInSeconds,
       @Value("${jwt.refresh-token-validity-in-seconds}") long refreshTokenValidityInSeconds) {
       this.secret = secret;
-      this.tokenValidityInMilliseconds = tokenValidityInSeconds * 1000;		//ÅäÅ«¸¸·á½Ã°£ º¯¼ö¿¡ ÇÒ´ç 30ºĞ (1800ÃÊ)
-      this.refreshTokenValidityInMilliseconds = refreshTokenValidityInSeconds * 1000;		//ÅäÅ«¸¸·á½Ã°£ º¯¼ö¿¡ ÇÒ´ç 30ºĞ (1800ÃÊ)
+      this.tokenValidityInMilliseconds = tokenValidityInSeconds * 1000;		//í† í°ë§Œë£Œì‹œê°„ ë³€ìˆ˜ì— í• ë‹¹ 30ë¶„ (1800ì´ˆ)
+      this.refreshTokenValidityInMilliseconds = refreshTokenValidityInSeconds * 1000;		//í† í°ë§Œë£Œì‹œê°„ ë³€ìˆ˜ì— í• ë‹¹ 30ë¶„ (1800ì´ˆ)
    }
 
    @Override
    public void afterPropertiesSet() {
-      byte[] keyBytes = Decoders.BASE64.decode(secret);			//application.yml secret Å°°¡ base64ÀÎÄÚµùµÇ¾î ÀÖ±â¶§¹®¿¡ µğÄÚµùÇÊ¿ä 
-      this.key = Keys.hmacShaKeyFor(keyBytes);					//µğÄÚµù ¿Ï·á ÈÄ Å°°ª ÇÒ´ç
+      byte[] keyBytes = Decoders.BASE64.decode(secret);			//application.yml secret í‚¤ê°€ base64ì¸ì½”ë”©ë˜ì–´ ìˆê¸°ë•Œë¬¸ì— ë””ì½”ë”©í•„ìš” 
+      this.key = Keys.hmacShaKeyFor(keyBytes);					//ë””ì½”ë”© ì™„ë£Œ í›„ í‚¤ê°’ í• ë‹¹
    }
 
-   // ±ÇÇÑÁ¤º¸ ÇÒ´ç
+   // ê¶Œí•œì •ë³´ í• ë‹¹
    public TokenDto createToken(Authentication authentication) {
       String authorities = authentication.getAuthorities().stream()
          .map(GrantedAuthority::getAuthority)
@@ -65,7 +65,7 @@ public class TokenProvider implements InitializingBean {
     	         .setSubject(authentication.getName())
     	         .claim(AUTHORITIES_KEY, authorities)
     	         .signWith(key, SignatureAlgorithm.HS512)
-    	         .setExpiration(validity)		//ÅäÅ«¸¸·á½Ã°£ ¼ÂÆÃ
+    	         .setExpiration(validity)		//í† í°ë§Œë£Œì‹œê°„ ì…‹íŒ…
     	         .compact();
       
       String refreshToken = Jwts.builder()
@@ -80,7 +80,7 @@ public class TokenProvider implements InitializingBean {
     		  .build();
    }
 
-   // ÅäÅ«À» ÆÄ¶ó¹ÌÅÍ·Î Àü´Ş¹Ş¾Æ ±ÇÇÑÁ¤º¸¸¦ È¹µæ ÈÄ User°´Ã¼»ı¼º
+   // í† í°ì„ íŒŒë¼ë¯¸í„°ë¡œ ì „ë‹¬ë°›ì•„ ê¶Œí•œì •ë³´ë¥¼ íšë“ í›„ Userê°ì²´ìƒì„±
    public Authentication getAuthentication(String token) {
       Claims claims = Jwts
               .parserBuilder()
@@ -96,22 +96,22 @@ public class TokenProvider implements InitializingBean {
 
       User principal = new User(claims.getSubject(), "", authorities);
 
-      return new UsernamePasswordAuthenticationToken(principal, token, authorities); //User°´Ã¼, ÅäÅ«, ±ÇÇÑÁ¤º¸¸¦ ¹Ş¾Æ Authentication °´Ã¼ ¸®ÅÏ
+      return new UsernamePasswordAuthenticationToken(principal, token, authorities); //Userê°ì²´, í† í°, ê¶Œí•œì •ë³´ë¥¼ ë°›ì•„ Authentication ê°ì²´ ë¦¬í„´
    }
 
-   // ÅäÅ«À¯È¿¼º °Ë»ç ÇÔ¼ö
+   // í† í°ìœ íš¨ì„± ê²€ì‚¬ í•¨ìˆ˜
    public boolean validateToken(String token) {
       try {
          Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
          return true;
       } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-         logger.info("Àß¸øµÈ JWT ¼­¸íÀÔ´Ï´Ù.");
+         logger.info("ì˜ëª»ëœ JWT ì„œëª…ì…ë‹ˆë‹¤.");
       } catch (ExpiredJwtException e) {
-         logger.info("¸¸·áµÈ JWT ÅäÅ«ÀÔ´Ï´Ù.");
+         logger.info("ë§Œë£Œëœ JWT í† í°ì…ë‹ˆë‹¤.");
       } catch (UnsupportedJwtException e) {
-         logger.info("Áö¿øµÇÁö ¾Ê´Â JWT ÅäÅ«ÀÔ´Ï´Ù.");
+         logger.info("ì§€ì›ë˜ì§€ ì•ŠëŠ” JWT í† í°ì…ë‹ˆë‹¤.");
       } catch (IllegalArgumentException e) {
-         logger.info("JWT ÅäÅ«ÀÌ Àß¸øµÇ¾ú½À´Ï´Ù.");
+         logger.info("JWT í† í°ì´ ì˜ëª»ë˜ì—ˆìŠµë‹ˆë‹¤.");
       }
       return false;
    }

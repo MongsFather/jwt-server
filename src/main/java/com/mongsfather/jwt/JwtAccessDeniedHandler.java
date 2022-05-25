@@ -13,7 +13,7 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
 
    @Override
    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException {
-      //ÇÊ¿äÇÑ ±ÇÇÑÀÌ ¾øÀÌ Á¢±ÙÇÏ·Á ÇÒ¶§ 403 return
+      //í•„ìš”í•œ ê¶Œí•œì´ ì—†ì´ ì ‘ê·¼í•˜ë ¤ í• ë•Œ 403 return
       response.sendError(HttpServletResponse.SC_FORBIDDEN);
    }
 }

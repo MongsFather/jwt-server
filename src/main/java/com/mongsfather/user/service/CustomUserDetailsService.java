@@ -27,12 +27,12 @@ public class CustomUserDetailsService implements UserDetailsService {
    public UserDetails loadUserByUsername(final String username) {
       return userRepository.findOneWithAuthoritiesByUsername(username)
          .map(user -> createUser(username, user))
-         .orElseThrow(() -> new UsernameNotFoundException(username + " -> µ¥ÀÌÅÍº£ÀÌ½º¿¡¼­ Ã£À» ¼ö ¾ø½À´Ï´Ù."));
+         .orElseThrow(() -> new UsernameNotFoundException(username + " -> ë°ì´í„°ë² ì´ìŠ¤ì—ì„œ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤."));
    }
 
    private org.springframework.security.core.userdetails.User createUser(String username, User user) {
       if (!user.isActivated()) {
-         throw new RuntimeException(username + " -> È°¼ºÈ­µÇ¾î ÀÖÁö ¾Ê½À´Ï´Ù.");
+         throw new RuntimeException(username + " -> í™œì„±í™”ë˜ì–´ ìˆì§€ ì•ŠìŠµë‹ˆë‹¤.");
       }
       List<GrantedAuthority> grantedAuthorities = user.getAuthorities().stream()
               .map(authority -> new SimpleGrantedAuthority(authority.getAuthorityName()))

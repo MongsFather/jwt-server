@@ -8,6 +8,6 @@ import com.mongsfather.entity.User;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
-   @EntityGraph(attributePaths = "authorities")	//±ÇÇÑÁ¤º¸¸¦ Áï½Ã·ÎµùÁ¶È¸ eager
-   Optional<User> findOneWithAuthoritiesByUsername(String username); //À¯ÀúÁ¤º¸¸¦ ±ÇÇÑÁ¤º¸¿Í °°ÀÌ È£Ãâ jpa ±â´ÉÀ¸·Î±¸Çö
+   @EntityGraph(attributePaths = "authorities")	//ê¶Œí•œì •ë³´ë¥¼ ì¦‰ì‹œë¡œë”©ì¡°íšŒ eager
+   Optional<User> findOneWithAuthoritiesByUsername(String username); //ìœ ì €ì •ë³´ë¥¼ ê¶Œí•œì •ë³´ì™€ ê°™ì´ í˜¸ì¶œ jpa ê¸°ëŠ¥ìœ¼ë¡œêµ¬í˜„
 }

@@ -26,7 +26,7 @@ public class JwtFilter extends GenericFilterBean {
       this.tokenProvider = tokenProvider;
    }
 
-   // ÅäÅ«ÀÇ ÀÎÁõÁ¤º¸¸¦ SecurityContext¿¡ ÀúÀå
+   // í† í°ì˜ ì¸ì¦ì •ë³´ë¥¼ SecurityContextì— ì €ì¥
    @Override
    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
       throws IOException, ServletException {
@@ -37,15 +37,15 @@ public class JwtFilter extends GenericFilterBean {
       if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
          Authentication authentication = tokenProvider.getAuthentication(jwt);
          SecurityContextHolder.getContext().setAuthentication(authentication);
-         logger.debug("Security Context¿¡ '{}' ÀÎÁõ Á¤º¸¸¦ ÀúÀåÇß½À´Ï´Ù, uri: {}", authentication.getName(), requestURI);
+         logger.debug("Security Contextì— '{}' ì¸ì¦ ì •ë³´ë¥¼ ì €ì¥í–ˆìŠµë‹ˆë‹¤, uri: {}", authentication.getName(), requestURI);
       } else {
-         logger.debug("À¯È¿ÇÑ JWT ÅäÅ«ÀÌ ¾ø½À´Ï´Ù, uri: {}", requestURI);
+         logger.debug("ìœ íš¨í•œ JWT í† í°ì´ ì—†ìŠµë‹ˆë‹¤, uri: {}", requestURI);
       }
 
       filterChain.doFilter(servletRequest, servletResponse);
    }
 
-   // request Header¿¡¼­ ÅäÅ«Á¤º¸¸¦ °¡Á®¿È
+   // request Headerì—ì„œ í† í°ì •ë³´ë¥¼ ê°€ì ¸ì˜´
    private String resolveToken(HttpServletRequest request) {
       String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
       if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
